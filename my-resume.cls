@@ -272,7 +272,7 @@
     % render the tagline once so its rendered height can drive \headerheight
     \sbox{\@taglinebox}{%
         \begin{minipage}[t]{\@headertextwidth}%
-            {\normalsize\bfseries\color{headerfontcolor}\@tagline\par}%
+            {\large\bfseries\color{headerfontcolor}\@tagline\par}%
         \end{minipage}%
     }%
     \setlength{\@taglineheight}{\dimexpr \ht\@taglinebox+\dp\@taglinebox}%
