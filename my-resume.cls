@@ -91,6 +91,9 @@
 % minipage has an annoying af indent that must be removed
 \setlength{\parindent}{0pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FONT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COLORS
@@ -298,12 +301,14 @@
 \newcommand{\address}[1]{\infofield{\faAt}{#1}}
 \newcommand{\location}[1]{\infofield{\faMapMarker}{#1}}
 \newcommand{\phone}[1]{\infofield{\faPhone}{#1}}
-\newcommand{\noticeperiod}[1]{\infofield{\faCalendar}{#1}}
+\newcommand{\noticeperiod}[1]{\infofield{\faCalendarTimesO}{#1}}
+\newcommand{\startdate}[1]{\infofield{\faCalendarCheckO}{#1}}
 \newcommand{\homepage}[2]{\infofield{\faHome}{\href{#2}{#1}}}
 \newcommand{\linkedin}[2]{\infofield{\faLinkedin}{\href{#2}{#1}}}
 \newcommand{\github}[2]{\infofield{\faGithub}{\href{#2}{#1}}}
 \newcommand{\orcid}[2]{\infofield{\aiOrcid}{\href{#2}{#1}}}
 \newcommand{\ads}[2]{\infofield{\aiADS}{\href{#2}{#1}}}
+\newcommand{\workinghours}[1]{\infofield{\faClockO}{#1}}
 
 
 
@@ -376,8 +381,8 @@
 % set length of date/place column versus position column in fraction of linewidth before linewidth gets redefined in minipages
 \newlength{\jobdateplacelength}
 \newlength{\jobpositionlength}
-\setlength{\jobdateplacelength}{0.4\linewidth}
-\setlength{\jobpositionlength}{0.6\linewidth}
+\setlength{\jobdateplacelength}{0.5\linewidth}
+\setlength{\jobpositionlength}{0.75\linewidth}
 \newcommand{\job}[4]{%
     \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
         \footnotesize
@@ -442,6 +447,61 @@
     \vspace{0.5em}
 }
 
+\newcommand{\jobleadership}[7]{%
+    \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
+        \footnotesize
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line dates
+            \makebox[3mm][c]{\faCalendar}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap date in minipage to allow multi-line dates
+            #1
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line places
+            \makebox[3mm][c]{\faMapMarker}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line places
+            #2
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faIndustry}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #3
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faGroup}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #4
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faGears}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #5
+        \end{minipage}%
+    \end{minipage}%
+    \begin{minipage}[t]{\jobpositionlength}% minipage for position
+        {\large \color{emphasis} #6}
+    \end{minipage}%
+    \ifstrequal{#6}{}{}{\par \vspace{0.1em} \footnotesize #7}
+    \par\normalsize
+    \vspace{0.5em}
+}
+
 % skill with 5 dot bar chart
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -462,7 +522,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\skillsection}[1]{%
-    \textit{\color{accent}#1}\par
+%    \textit{\color{accent}#1}\par
+    \textbf{\color{accent}#1}\\
 }
 
 % tag (framed word or phrase)
