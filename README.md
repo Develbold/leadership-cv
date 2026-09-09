@@ -1,9 +1,12 @@
 # resume templates
 
-This LaTeX template is a fork of (https://github.com/GiantMolecularCloud/my-resume) and adds the following sections:
+This LaTeX template is a fork of (https://github.com/GiantMolecularCloud/my-resume) and adds the following:
 * job section is extended with industry or sector
-* notice period section
+* leadership job section that also names the size of the team and the work streams or tech stack
+* notice period, earliest start date and working hours sections
 * voluntary work
+* the highlight bar and the main bar break across pages instead of moving to the next page as a whole
+* the header sizes itself to the tagline instead of to a fixed height, with `\headergap` controlling the space around it
 
 # Example PDF
 
