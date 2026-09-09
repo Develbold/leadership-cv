@@ -276,7 +276,7 @@
         \end{minipage}%
     }%
     \setlength{\@taglineheight}{\dimexpr \ht\@taglinebox+\dp\@taglinebox}%
-    \setlength{\headerheight}{\dimexpr 2em+\headergap+\@taglineheight}%
+    \setlength{\headerheight}{\dimexpr \@namefontheight+2\headergap+\@taglineheight}%
     % header bar is a minipage
     \begin{minipage}[t][\headerheight]{\textwidth}%
         % \vspace{-1em}
@@ -287,7 +287,10 @@
                 \vspace{0cm}%
             }{}
             % print the header text
-                \begin{minipage}[t][2em]{\linewidth}
+                % the -1.8pt is an optical correction: the tagline box carries interline
+                % glue above it and descender depth below it, so without it the visible
+                % gap above the tagline reads larger than the one beneath it
+                \begin{minipage}[t][\dimexpr \@namefontheight+\headergap-1.8pt]{\linewidth}
                     {\Huge\bfseries\color{headerfontcolor}\MakeUppercase{\@name}\par}
                 \end{minipage}%
                 \vfill%
