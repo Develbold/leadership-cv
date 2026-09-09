@@ -250,14 +250,34 @@
 \settoheight{\@namefontheight}{\Huge\bfseries\MakeUppercase{A}}
 \setlength\@namelineheight{1.5\@namefontheight}
 
+% state used to measure the tagline so the header can size itself to its content
+\newlength{\@headertextwidth}
+\newsavebox{\@taglinebox}
+\newlength{\@taglineheight}
+
 % assemble the header
-\newcommand{\makeheader}{% header bar is a minipage
+\newcommand{\makeheader}{%
+    % determine the width available for the header text column
+    \ifdef{\@photodiameter}{%
+        \setlength{\@headertextwidth}{\dimexpr \textwidth-\@photodiameter}%
+    }{%
+        \setlength{\@headertextwidth}{\textwidth}%
+    }
+    % render the tagline once so its rendered height can drive \headerheight
+    \sbox{\@taglinebox}{%
+        \begin{minipage}[t]{\@headertextwidth}%
+            {\large\bfseries\color{headerfontcolor}\@tagline\par}%
+        \end{minipage}%
+    }%
+    \setlength{\@taglineheight}{\dimexpr \ht\@taglinebox+\dp\@taglinebox}%
+    \setlength{\headerheight}{\dimexpr 2em+\marginbottom+\@taglineheight}%
+    % header bar is a minipage
     \begin{minipage}[t][\headerheight]{\textwidth}%
         % \vspace{-1em}
         \vspace{\dimexpr \@namefontheight-\@namelineheight}                     % align top of name and photo
         % create two minipages for header text and photo if photo is given
         \ifdef{\@photodiameter}{
-            \begin{minipage}[t]{\dimexpr \textwidth-\@photodiameter}        % to top align name and photo add [t] here
+            \begin{minipage}[t]{\@headertextwidth}        % to top align name and photo add [t] here
                 \vspace{0cm}%
             }{}
             % print the header text
@@ -265,9 +285,7 @@
                     {\Huge\bfseries\color{headerfontcolor}\MakeUppercase{\@name}\par}
                 \end{minipage}%
                 \vfill%
-                \begin{minipage}[b][\dimexpr \headerheight-2em-\marginbottom]{\linewidth}%
-                    {\large\bfseries\color{headerfontcolor}\@tagline\par}
-                \end{minipage}%
+                \usebox{\@taglinebox}%
         % finish the minipages for text and photo if photo is given
         \ifdef{\@photodiameter}{%
             \end{minipage}\hfil%
