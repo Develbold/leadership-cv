@@ -257,6 +257,7 @@
 \newlength{\@headertextwidth}
 \newsavebox{\@taglinebox}
 \newlength{\@taglineheight}
+\newlength{\@photoheight}
 
 % assemble the header
 \newcommand{\makeheader}{%
@@ -277,6 +278,15 @@
     }%
     \setlength{\@taglineheight}{\dimexpr \ht\@taglinebox+\dp\@taglinebox}%
     \setlength{\headerheight}{\dimexpr \@namefontheight+2\headergap+\@taglineheight}%
+    % the header must stay at least as tall as the photo: a tagline short enough to
+    % size the header below the photo would leave the photo hanging out of the header
+    % bar and into the body beneath it
+    \ifdef{\@photodiameter}{%
+        \setlength{\@photoheight}{\@photodiameter}%
+        \ifdim\headerheight<\@photoheight%
+            \setlength{\headerheight}{\@photoheight}%
+        \fi
+    }{}%
     % header bar is a minipage
     \begin{minipage}[t][\headerheight]{\textwidth}%
         % \vspace{-1em}
