@@ -51,6 +51,7 @@
 \RequirePackage{xcolor}
 \RequirePackage{fontawesome}
 \RequirePackage{academicons}
+\RequirePackage{paracol}        % page-breakable parallel columns for the body
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +70,7 @@
 
 \newlength\highlightwidth
 \newlength\headerheight
+\newlength\headergap
 \newlength\marginleft
 \newlength\marginright
 \newlength\margintop
@@ -76,6 +78,7 @@
 
 % default sizes, margins, ...
 \setlength\highlightwidth{8cm}
+\setlength\headergap{0.3cm}             % vertical gap between the name and the tagline
 \setlength\headerheight{6cm}
 \setlength\marginleft{1cm}
 \setlength\marginright{\marginleft}
@@ -91,6 +94,9 @@
 % minipage has an annoying af indent that must be removed
 \setlength{\parindent}{0pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FONT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COLORS
@@ -247,24 +253,59 @@
 \settoheight{\@namefontheight}{\Huge\bfseries\MakeUppercase{A}}
 \setlength\@namelineheight{1.5\@namefontheight}
 
+% state used to measure the tagline so the header can size itself to its content
+\newlength{\@headertextwidth}
+\newsavebox{\@taglinebox}
+\newlength{\@taglineheight}
+\newlength{\@minheaderheight}
+
 % assemble the header
-\newcommand{\makeheader}{% header bar is a minipage
+\newcommand{\makeheader}{%
+    % the header background belongs to the page carrying the header, not the document
+    \thispagestyle{headerhighlightmain}%
+    % determine the width available for the header text column,
+    % keeping a margin between the text and the photo
+    \ifdef{\@photodiameter}{%
+        \setlength{\@headertextwidth}{\dimexpr \textwidth-\@photodiameter-\marginleft}%
+    }{%
+        \setlength{\@headertextwidth}{\textwidth}%
+    }
+    % render the tagline once so its rendered height can drive \headerheight
+    \sbox{\@taglinebox}{%
+        \begin{minipage}[t]{\@headertextwidth}%
+            {\large\bfseries\color{headerfontcolor}\@tagline\par}%
+        \end{minipage}%
+    }%
+    \setlength{\@taglineheight}{\dimexpr \ht\@taglinebox+\dp\@taglinebox}%
+    \setlength{\headerheight}{\dimexpr \@namefontheight+2\headergap+\@taglineheight}%
+    % the header must stay tall enough to hold the photo: a tagline short enough to
+    % size the header below the photo would leave the photo hanging out of the header
+    % bar and into the body beneath it. The photo keeps \headergap to the bottom of
+    % the bar, the same gap the height above gives the tagline
+    \ifdef{\@photodiameter}{%
+        \setlength{\@minheaderheight}{\dimexpr \@photodiameter+\headergap}%
+        \ifthenelse{\lengthtest{\headerheight<\@minheaderheight}}{%
+            \setlength{\headerheight}{\@minheaderheight}%
+        }{}%
+    }{}%
+    % header bar is a minipage
     \begin{minipage}[t][\headerheight]{\textwidth}%
         % \vspace{-1em}
         \vspace{\dimexpr \@namefontheight-\@namelineheight}                     % align top of name and photo
         % create two minipages for header text and photo if photo is given
         \ifdef{\@photodiameter}{
-            \begin{minipage}[t]{\dimexpr \textwidth-\@photodiameter}        % to top align name and photo add [t] here
+            \begin{minipage}[t]{\@headertextwidth}        % to top align name and photo add [t] here
                 \vspace{0cm}%
             }{}
             % print the header text
-                \begin{minipage}[t][2em]{\linewidth}
+                % the -1.8pt is an optical correction: the tagline box carries interline
+                % glue above it and descender depth below it, so without it the visible
+                % gap above the tagline reads larger than the one beneath it
+                \begin{minipage}[t][\dimexpr \@namefontheight+\headergap-1.8pt]{\linewidth}
                     {\Huge\bfseries\color{headerfontcolor}\MakeUppercase{\@name}\par}
                 \end{minipage}%
                 \vfill%
-                \begin{minipage}[b][\dimexpr \headerheight-2em-\marginbottom]{\linewidth}%
-                    {\large\bfseries\color{headerfontcolor}\@tagline\par}
-                \end{minipage}%
+                \usebox{\@taglinebox}%
         % finish the minipages for text and photo if photo is given
         \ifdef{\@photodiameter}{%
             \end{minipage}\hfil%
@@ -298,56 +339,53 @@
 \newcommand{\address}[1]{\infofield{\faAt}{#1}}
 \newcommand{\location}[1]{\infofield{\faMapMarker}{#1}}
 \newcommand{\phone}[1]{\infofield{\faPhone}{#1}}
-\newcommand{\noticeperiod}[1]{\infofield{\faCalendar}{#1}}
+\newcommand{\noticeperiod}[1]{\infofield{\faCalendarTimesO}{#1}}
+\newcommand{\startdate}[1]{\infofield{\faCalendarCheckO}{#1}}
 \newcommand{\homepage}[2]{\infofield{\faHome}{\href{#2}{#1}}}
 \newcommand{\linkedin}[2]{\infofield{\faLinkedin}{\href{#2}{#1}}}
 \newcommand{\github}[2]{\infofield{\faGithub}{\href{#2}{#1}}}
 \newcommand{\orcid}[2]{\infofield{\aiOrcid}{\href{#2}{#1}}}
 \newcommand{\ads}[2]{\infofield{\aiADS}{\href{#2}{#1}}}
+\newcommand{\workinghours}[1]{\infofield{\faClockO}{#1}}
 
 
 
 % highlight bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% the content is stored unwrapped, so that paracol can break it across pages
 \newcommand{\highlightbar}[1]{%
-    \def\@highlightbar{%
-        \begin{minipage}[t]{\dimexpr \highlightwidth-\marginleft-\marginright}%
-            #1%
-        \end{minipage}%
-    }
+    \def\@highlightbar{#1}%
 }
 
 % main bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\mainbar}[1]{%
-    \def\@mainbar{%
-        \begin{minipage}[t]{\dimexpr \textwidth-\highlightwidth}%
-            #1%
-        \end{minipage}%
-    }
+    \def\@mainbar{#1}%
 }
 
 % make body with highlight bar and main bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% the bars are parallel columns rather than minipages, so content that outgrows the
+% remaining page continues on the next one instead of being moved there as a whole
 \newcommand{\makebody}{%
+    \setlength{\columnsep}{\dimexpr \marginleft+\marginright}%
+    \setcolumnwidth{\dimexpr \highlightwidth-\marginleft-\marginright,%
+                    \dimexpr \textwidth-\highlightwidth}%
     \ifthenelse{\boolean{@singleordouble}}
-        {% if single layout, the highlight bar is always left
-            \@highlightbar
-            \hspace{\dimexpr \marginleft+\marginright}%
-            \@mainbar
-        }{% if double layout, the highlight bar alternates
-            \Ifthispageodd{% if the page is odd, the highlight bar is on the left (as is for single layout)
-                \@highlightbar
-                \hspace{\dimexpr \marginleft+\marginright}%
-                \@mainbar
-            }{%  if the page is even, the highlight bar is on the right
-                \@mainbar
-                \hspace{\dimexpr \marginleft+\marginright}%
-                \@highlightbar
-            }   
-        }
+        {\noswapcolumninevenpages}% if single layout, the highlight bar is always left
+        {\swapcolumninevenpages}%  if double layout, the highlight bar alternates
+    \begin{paracol}{2}%
+        % the narrow bars need the line-breaking latitude the minipages used to provide,
+        % otherwise long technical terms overhang the column
+        \sloppy
+        \@highlightbar
+        \switchcolumn
+        \sloppy
+        \@mainbar
+    \end{paracol}%
 }
 
 
@@ -376,8 +414,8 @@
 % set length of date/place column versus position column in fraction of linewidth before linewidth gets redefined in minipages
 \newlength{\jobdateplacelength}
 \newlength{\jobpositionlength}
-\setlength{\jobdateplacelength}{0.4\linewidth}
-\setlength{\jobpositionlength}{0.6\linewidth}
+\setlength{\jobdateplacelength}{0.5\linewidth}
+\setlength{\jobpositionlength}{0.75\linewidth}
 \newcommand{\job}[4]{%
     \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
         \footnotesize
@@ -442,6 +480,61 @@
     \vspace{0.5em}
 }
 
+\newcommand{\jobleadership}[7]{%
+    \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
+        \footnotesize
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line dates
+            \makebox[3mm][c]{\faCalendar}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap date in minipage to allow multi-line dates
+            #1
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line places
+            \makebox[3mm][c]{\faMapMarker}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line places
+            #2
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faIndustry}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #3
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faGroup}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #4
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faGears}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #5
+        \end{minipage}%
+    \end{minipage}%
+    \begin{minipage}[t]{\jobpositionlength}% minipage for position
+        {\large \color{emphasis} #6}
+    \end{minipage}%
+    \ifstrequal{#6}{}{}{\par \vspace{0.1em} \footnotesize #7}
+    \par\normalsize
+    \vspace{0.5em}
+}
+
 % skill with 5 dot bar chart
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -462,7 +555,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\skillsection}[1]{%
-    \textit{\color{accent}#1}\par
+%    \textit{\color{accent}#1}\par
+    \textbf{\color{accent}#1}\\
 }
 
 % tag (framed word or phrase)
@@ -629,7 +723,7 @@
 % FINAL FORMATTING
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pagestyle{headerhighlightmain}
+\pagestyle{highlightmain}
 \RequirePackage{hyperref}
 
 
