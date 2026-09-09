@@ -51,6 +51,7 @@
 \RequirePackage{xcolor}
 \RequirePackage{fontawesome}
 \RequirePackage{academicons}
+\RequirePackage{paracol}        % page-breakable parallel columns for the body
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,6 +258,8 @@
 
 % assemble the header
 \newcommand{\makeheader}{%
+    % the header background belongs to the page carrying the header, not the document
+    \thispagestyle{headerhighlightmain}%
     % determine the width available for the header text column
     \ifdef{\@photodiameter}{%
         \setlength{\@headertextwidth}{\dimexpr \textwidth-\@photodiameter}%
@@ -333,44 +336,39 @@
 % highlight bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% the content is stored unwrapped, so that paracol can break it across pages
 \newcommand{\highlightbar}[1]{%
-    \def\@highlightbar{%
-        \begin{minipage}[t]{\dimexpr \highlightwidth-\marginleft-\marginright}%
-            #1%
-        \end{minipage}%
-    }
+    \def\@highlightbar{#1}%
 }
 
 % main bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\mainbar}[1]{%
-    \def\@mainbar{%
-        \begin{minipage}[t]{\dimexpr \textwidth-\highlightwidth}%
-            #1%
-        \end{minipage}%
-    }
+    \def\@mainbar{#1}%
 }
 
 % make body with highlight bar and main bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% the bars are parallel columns rather than minipages, so content that outgrows the
+% remaining page continues on the next one instead of being moved there as a whole
 \newcommand{\makebody}{%
+    \setlength{\columnsep}{\dimexpr \marginleft+\marginright}%
+    \setcolumnwidth{\dimexpr \highlightwidth-\marginleft-\marginright,%
+                    \dimexpr \textwidth-\highlightwidth}%
     \ifthenelse{\boolean{@singleordouble}}
-        {% if single layout, the highlight bar is always left
-            \@highlightbar
-            \hspace{\dimexpr \marginleft+\marginright}%
-            \@mainbar
-        }{% if double layout, the highlight bar alternates
-            \Ifthispageodd{% if the page is odd, the highlight bar is on the left (as is for single layout)
-                \@highlightbar
-                \hspace{\dimexpr \marginleft+\marginright}%
-                \@mainbar
-            }{%  if the page is even, the highlight bar is on the right
-                \@mainbar
-                \hspace{\dimexpr \marginleft+\marginright}%
-                \@highlightbar
-            }   
-        }
+        {\noswapcolumninevenpages}% if single layout, the highlight bar is always left
+        {\swapcolumninevenpages}%  if double layout, the highlight bar alternates
+    \begin{paracol}{2}%
+        % the narrow bars need the line-breaking latitude the minipages used to provide,
+        % otherwise long technical terms overhang the column
+        \sloppy
+        \@highlightbar
+        \switchcolumn
+        \sloppy
+        \@mainbar
+    \end{paracol}%
 }
 
 
@@ -708,7 +706,7 @@
 % FINAL FORMATTING
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pagestyle{headerhighlightmain}
+\pagestyle{highlightmain}
 \RequirePackage{hyperref}
 
 
