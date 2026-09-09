@@ -70,6 +70,7 @@
 
 \newlength\highlightwidth
 \newlength\headerheight
+\newlength\headergap
 \newlength\marginleft
 \newlength\marginright
 \newlength\margintop
@@ -77,6 +78,7 @@
 
 % default sizes, margins, ...
 \setlength\highlightwidth{8cm}
+\setlength\headergap{0.3cm}             % vertical gap between the name and the tagline
 \setlength\headerheight{6cm}
 \setlength\marginleft{1cm}
 \setlength\marginright{\marginleft}
@@ -270,11 +272,11 @@
     % render the tagline once so its rendered height can drive \headerheight
     \sbox{\@taglinebox}{%
         \begin{minipage}[t]{\@headertextwidth}%
-            {\large\bfseries\color{headerfontcolor}\@tagline\par}%
+            {\normalsize\bfseries\color{headerfontcolor}\@tagline\par}%
         \end{minipage}%
     }%
     \setlength{\@taglineheight}{\dimexpr \ht\@taglinebox+\dp\@taglinebox}%
-    \setlength{\headerheight}{\dimexpr 2em+\marginbottom+\@taglineheight}%
+    \setlength{\headerheight}{\dimexpr 2em+\headergap+\@taglineheight}%
     % header bar is a minipage
     \begin{minipage}[t][\headerheight]{\textwidth}%
         % \vspace{-1em}
