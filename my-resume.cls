@@ -260,9 +260,10 @@
 \newcommand{\makeheader}{%
     % the header background belongs to the page carrying the header, not the document
     \thispagestyle{headerhighlightmain}%
-    % determine the width available for the header text column
+    % determine the width available for the header text column,
+    % keeping a margin between the text and the photo
     \ifdef{\@photodiameter}{%
-        \setlength{\@headertextwidth}{\dimexpr \textwidth-\@photodiameter}%
+        \setlength{\@headertextwidth}{\dimexpr \textwidth-\@photodiameter-\marginleft}%
     }{%
         \setlength{\@headertextwidth}{\textwidth}%
     }
