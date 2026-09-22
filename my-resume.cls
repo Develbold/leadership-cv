@@ -49,7 +49,7 @@
 \RequirePackage[skins]{tcolorbox}       % somehow required for tikz to work at all
 \RequirePackage{graphicx}
 \RequirePackage{xcolor}
-\RequirePackage{fontawesome}
+\RequirePackage{fontawesome5}
 \RequirePackage{academicons}
 \RequirePackage{paracol}        % page-breakable parallel columns for the body
 
@@ -339,14 +339,14 @@
 \newcommand{\address}[1]{\infofield{\faAt}{#1}}
 \newcommand{\location}[1]{\infofield{\faMapMarker}{#1}}
 \newcommand{\phone}[1]{\infofield{\faPhone}{#1}}
-\newcommand{\noticeperiod}[1]{\infofield{\faCalendarTimesO}{#1}}
-\newcommand{\startdate}[1]{\infofield{\faCalendarCheckO}{#1}}
+\newcommand{\noticeperiod}[1]{\infofield{\faCalendarTimes}{#1}}
+\newcommand{\startdate}[1]{\infofield{\faCalendarCheck}{#1}}
 \newcommand{\homepage}[2]{\infofield{\faHome}{\href{#2}{#1}}}
 \newcommand{\linkedin}[2]{\infofield{\faLinkedin}{\href{#2}{#1}}}
 \newcommand{\github}[2]{\infofield{\faGithub}{\href{#2}{#1}}}
 \newcommand{\orcid}[2]{\infofield{\aiOrcid}{\href{#2}{#1}}}
 \newcommand{\ads}[2]{\infofield{\aiADS}{\href{#2}{#1}}}
-\newcommand{\workinghours}[1]{\infofield{\faClockO}{#1}}
+\newcommand{\workinghours}[1]{\infofield{\faClock}{#1}}
 
 
 
@@ -511,7 +511,7 @@
         \par
         \vspace{0.1em}
         \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
-            \makebox[3mm][c]{\faGroup}
+            \makebox[3mm][c]{\faUsers}
         \end{minipage}%
         \hspace{0.5em}%
         \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
@@ -520,7 +520,7 @@
         \par
         \vspace{0.1em}
         \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
-            \makebox[3mm][c]{\faGears}
+            \makebox[3mm][c]{\faCogs}
         \end{minipage}%
         \hspace{0.5em}%
         \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
@@ -533,6 +533,47 @@
     \ifstrequal{#6}{}{}{\par \vspace{0.1em} \footnotesize #7}
     \par\normalsize
     \vspace{0.5em}
+}
+
+% job entry for IC roles with a responsibilities/task list section
+\newcommand{\jobtasks}[5]{%
+    \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
+        \footnotesize
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line dates
+            \makebox[3mm][c]{\faCalendar}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap date in minipage to allow multi-line dates
+            #1
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line places
+            \makebox[3mm][c]{\faMapMarker}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line places
+            #2
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faIndustry}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #3
+        \end{minipage}%
+    \end{minipage}%
+    \begin{minipage}[t]{\jobpositionlength}% minipage for position
+        {\large \color{emphasis} #4}
+    \end{minipage}%
+    % task list section with list icon
+    \ifstrequal{#5}{}{}{%
+        \par
+        {\footnotesize\makebox[3mm][c]{\faListUl}\hspace{0.5em}\footnotesize #5}%
+    }%
+    \par\normalsize
 }
 
 % skill with 5 dot bar chart
@@ -658,7 +699,7 @@
     {\normalsize \color{emphasis}#1\par}
     \vspace{0.1em}%
     \begin{minipage}[t]{3mm}%
-        \makebox[3mm][c]{\footnotesize \faGroup}
+        \makebox[3mm][c]{\footnotesize \faUsers}
     \end{minipage}%
     \hspace{0.5em}%
     \begin{minipage}[t]{\dimexpr \linewidth-3mm-0.5em}%
@@ -690,7 +731,7 @@
     \hspace{1.0em}
     \begin{minipage}[t]{\publinklength}%
         \ifstrequal{#5}{}{}{%
-            \footnotesize \makebox[3mm][c]{\faChain} \hspace{0.25em} #5\par
+            \footnotesize \makebox[3mm][c]{\faLink} \hspace{0.25em} #5\par
         }%
     \end{minipage}%
     \par\normalsize
