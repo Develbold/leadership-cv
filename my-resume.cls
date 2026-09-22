@@ -570,10 +570,18 @@
     \end{minipage}%
     % task list section with list icon
     \ifstrequal{#5}{}{}{%
-        \par
-        {\footnotesize\makebox[3mm][c]{\faListUl}\hspace{0.5em}\footnotesize #5}%
+        \par \vspace{0.1em}%
+        {\footnotesize
+        \begin{minipage}[t]{3mm}% wrap marker in minipage like the header rows
+            \makebox[3mm][c]{\faListUl}%
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \linewidth-3mm-0.5em}% wrap text so continuation lines align after the icon
+            #5%
+        \end{minipage}}%
     }%
     \par\normalsize
+    \vspace{0.5em}
 }
 
 % skill with 5 dot bar chart
