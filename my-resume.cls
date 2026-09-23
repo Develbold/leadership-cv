@@ -535,6 +535,53 @@
     \vspace{0.5em}
 }
 
+% leadership job entry without the focus/context row (no \faCogs line)
+\newcommand{\jobleadershipcompact}[6]{%
+    \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
+        \footnotesize
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line dates
+            \makebox[3mm][c]{\faCalendar}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap date in minipage to allow multi-line dates
+            #1
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line places
+            \makebox[3mm][c]{\faMapMarker}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line places
+            #2
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faIndustry}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #3
+        \end{minipage}%
+        \par
+        \vspace{0.1em}
+        \begin{minipage}[t]{3mm}% wrap marker in minipage to allow multi-line sectors
+            \makebox[3mm][c]{\faUsers}
+        \end{minipage}%
+        \hspace{0.5em}%
+        \begin{minipage}[t]{\dimexpr \jobdateplacelength-3mm-0.5em}% wrap place in minipage to allow multi-line sectors
+            #4
+        \end{minipage}%
+    \end{minipage}%
+    \begin{minipage}[t]{\jobpositionlength}% minipage for position
+        {\large \color{emphasis} #5}
+    \end{minipage}%
+    \ifstrequal{#6}{}{}{\par \vspace{0.1em} \footnotesize #6}
+    \par\normalsize
+    \vspace{0.5em}
+}
+
 % job entry for IC roles with a responsibilities/task list section
 \newcommand{\jobtasks}[5]{%
     \begin{minipage}[t]{\jobdateplacelength}% minipage for left column with date/place
