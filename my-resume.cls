@@ -27,6 +27,17 @@
 \DeclareOption{singlesided}{\setboolean{@singleordouble}{true}}
 \DeclareOption{doublesided}{\setboolean{@singleordouble}{false}}
 
+% option to pin the highlight bar (sidebar) to a fixed base font size so it
+% keeps the 10pt ladder while the document body grows to 11pt or 12pt;
+% 'auto' lets the sidebar follow the document font size like any other text
+% only the curated KOMA ladder sizes are offered; anything else would fall
+% through to the catch-all option and be handed to scrartcl
+\def\@sidebarfontsize{auto}
+\DeclareOption{sidebarfontsize=auto}{\def\@sidebarfontsize{auto}}
+\DeclareOption{sidebarfontsize=10pt}{\def\@sidebarfontsize{10pt}}
+\DeclareOption{sidebarfontsize=11pt}{\def\@sidebarfontsize{11pt}}
+\DeclareOption{sidebarfontsize=12pt}{\def\@sidebarfontsize{12pt}}
+
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
 \ProcessOptions*
 
@@ -381,7 +392,25 @@
         % the narrow bars need the line-breaking latitude the minipages used to provide,
         % otherwise long technical terms overhang the column
         \sloppy
-        \@highlightbar
+        \ifthenelse{\equal{\@sidebarfontsize}{auto}}{%
+            \@highlightbar
+        }{%
+            % pin the sidebar to a fixed base size so it keeps its ladder while
+            % the document body grows. The curated KOMA ladder file is used so
+            % the pinned sidebar is exactly what a document of that base size
+            % would render; \changefontsizes would only compute a scaled ladder
+            % that deviates from the curated one (e.g. \Large 14.4/17.28 instead
+            % of 14/18 for 10pt), shifting baselines visibly.
+            \begingroup
+            \makeatletter
+            \InputIfFileExists{\@fontsizefilebase\@sidebarfontsize.clo}{}{%
+                \changefontsizes{\@sidebarfontsize}%
+            }%
+            \makeatother
+            \normalsize
+            \@highlightbar\par
+            \endgroup
+        }%
         \switchcolumn
         \sloppy
         \@mainbar
