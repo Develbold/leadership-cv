@@ -63,6 +63,7 @@
 \RequirePackage{fontawesome5}
 \RequirePackage{academicons}
 \RequirePackage{paracol}        % page-breakable parallel columns for the body
+\RequirePackage{needspace}      % keep sidebar sections from orphaning at a page break
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -679,28 +680,23 @@
 % education entry for the narrow highlight bar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% stacked narrow-column variant of \job: icon columns like the job date/place
-% rows, degree as the visible emphasis line. \job's 0.5/0.75\linewidth
-% minipage split is unusable at \highlightwidth-2\marginleft.
+% stacked narrow-column variant of \job, structured title -> date -> place.
+% The bold title is exactly \simpleskill's style; date and place sit in plain
+% ambient size with the same icon columns the job date/place rows use.
+% \job's 0.5/0.75\linewidth minipage split is unusable at
+% \highlightwidth-2\marginleft.
 \newcommand{\eduentry}[3]{%
+    \textcolor{emphasis}{\textbf{#1}}\par
+    \vspace{0.1em}
     \begin{minipage}[t]{3mm}%
         \makebox[3mm][c]{\footnotesize \faCalendar}
     \end{minipage}%
-    \hspace{0.5em}%
-    \begin{minipage}[t]{\dimexpr \linewidth-3mm-0.5em}%
-        {\footnotesize #1\par}
-    \end{minipage}%
-    \par
+    \hspace{0.5em}#2\par
     \vspace{0.1em}
     \begin{minipage}[t]{3mm}%
         \makebox[3mm][c]{\footnotesize \faMapMarker}
     \end{minipage}%
-    \hspace{0.5em}%
-    \begin{minipage}[t]{\dimexpr \linewidth-3mm-0.5em}%
-        {\footnotesize #2\par}
-    \end{minipage}%
-    \par
-    {\normalsize\color{emphasis}#3\par}
+    \hspace{0.5em}#3\par
     \vspace{0.4em}
 }
 
